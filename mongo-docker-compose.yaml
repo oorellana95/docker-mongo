@@ -1,5 +1,22 @@
 version: "3"
 services:
+  # local image, required command: docker build -t my-app:staging .
+  #my-app:
+  # image: my-app:staging
+  # ports:
+  #   - "3000:3000"
+
+  # docker registry: {docker-registry}/my-app:1.0
+  #my-app:
+  # image: {docker-registry}/my-app:1.0
+  # ports:
+  #   - "3000:3000"
+
+
+  # Running independently:
+  # local image, required command: docker build -t my-app:staging .
+  # docker run -p 3000:3000 --name app --network={add_generated_network by docker_compose or create an independent network} my-app:staging
+  
   mongodb:
     image: mongo
     ports:
@@ -13,6 +30,8 @@ services:
       timeout: 10s
       retries: 5
       start_period: 10s
+    volumes:
+      - "mongo-data:/data/db" # name of the volume (see below) and the default path where mongo saves its data
   mongo-express:
     image: mongo-express
     # restart: on-failure
@@ -26,3 +45,6 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
+volumes:
+  mongo-data:
+    driver: local
